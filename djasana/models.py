@@ -56,7 +56,7 @@ class Attachment(BaseModel):
         ('asana', 'asana'),
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    download_url = models.URLField(max_length=1024)
+    download_url = models.URLField(max_length=1024, null=True)
     host = models.CharField(choices=host_choices, max_length=24)
     parent = models.ForeignKey('Task', to_field='remote_id', on_delete=models.CASCADE)
     permanent_url = models.URLField(max_length=1024)

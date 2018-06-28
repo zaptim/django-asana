@@ -257,8 +257,10 @@ class Command(BaseCommand):
             project_dict['archived'] = project_dict['archived'] == 'true'
             members_dict = project_dict.pop('members')
             followers_dict = project_dict.pop('followers')
+            field_names = [f.name for f in Project._meta.fields]
+            project_defaults = {k: project_dict[k] for k in field_names if k in project_dict}
             project = Project.objects.update_or_create(
-                remote_id=remote_id, defaults=project_dict)[0]
+                remote_id=remote_id, defaults=project_defaults)[0]
             member_ids = [member['id'] for member in members_dict]
             members = User.objects.filter(id__in=member_ids)
             project.members.set(members)
@@ -302,11 +304,13 @@ class Command(BaseCommand):
     def _sync_tag(self, tag):
         tag_dict = self.client.tags.find_by_id(tag['id'])
         logger.debug(tag_dict)
+        field_names = [f.name for f in Tag._meta.fields]
+        tag_defaults = {k: tag_dict[k] for k in field_names if k in tag_dict}
         if self.commit:
             remote_id = tag_dict.pop('id')
             Tag.objects.get_or_create(
                 remote_id=remote_id,
-                defaults=tag_dict)
+                defaults=tag_defaults)
 
     def _sync_task(self, task, project, models, skip_subtasks=False):
         """Sync this task and parent its subtasks
@@ -345,8 +349,10 @@ class Command(BaseCommand):
                 task_dict['parent_id'] = parent_id
             followers_dict = task_dict.pop('followers')
             tags_dict = task_dict.pop('tags')
+            field_names = [f.name for f in Task._meta.fields]
+            task_defaults = {k: task_dict[k] for k in field_names if k in task_dict}
             task_ = Task.objects.update_or_create(
-                remote_id=remote_id, defaults=task_dict)[0]
+                remote_id=remote_id, defaults=task_defaults)[0]
             if not skip_subtasks:
                 subtasks = self.client.tasks.subtasks(task['id'])
                 for subtask in subtasks:
