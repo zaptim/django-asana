@@ -61,6 +61,7 @@ class Attachment(BaseModel):
     parent = models.ForeignKey('Task', to_field='remote_id', on_delete=models.CASCADE)
     permanent_url = models.URLField(max_length=1024)
     view_url = models.URLField(max_length=1024)
+    type = models.CharField(null=True, max_length=1024)
 
     def asana_url(self, project=None):
         return self.permanent_url
