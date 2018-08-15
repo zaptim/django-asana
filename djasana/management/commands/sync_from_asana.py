@@ -305,13 +305,12 @@ class Command(BaseCommand):
         tag_dict = self.client.tags.find_by_id(tag['id'])
         logger.debug(tag_dict)
         field_names = [f.name for f in Tag._meta.fields]
-        tag_defaults = {k: tag_dict[k] for k in field_names if k in tag_dict}
+        tag_defaults = {k: tag_dict[k] for k in field_names if k in tag_dict if k != 'id'}
         if self.commit:
             remote_id = tag_dict.pop('id')
             Tag.objects.get_or_create(
                 remote_id=remote_id,
                 defaults=tag_defaults)
-
     def _sync_task(self, task, project, models, skip_subtasks=False):
         """Sync this task and parent its subtasks
 
