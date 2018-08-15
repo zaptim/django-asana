@@ -100,6 +100,7 @@ class Project(BaseModel):
     workspace = models.ForeignKey('Workspace', to_field='remote_id', on_delete=models.CASCADE)
 
     def asana_url(self):
+        """Returns the absolute url for this project at Asana."""
         return '{}{}/list'.format(ASANA_BASE_URL, self.remote_id)
 
 
@@ -160,6 +161,7 @@ class Task(Hearted, BaseModel):
         return '{}{}/{}/list'.format(ASANA_BASE_URL, project.workspace.remote_id, self.remote_id)
 
     def asana_url(self, project=None):
+        """Returns the absolute url for this task at Asana."""
         if project:
             return self._asana_project_url(project)
         projects = self.projects.all()
@@ -168,11 +170,19 @@ class Task(Hearted, BaseModel):
             return self._asana_project_url(project)
         return super(Task, self).asana_url()
 
+    def delete_from_asana(self, *args, **kwargs):
+        """Deletes this task from Asana and then deletes this model instance."""
+        client = client_connect()
+        client.tasks.delete(self.remote_id)
+        logger.debug('Deleted asana task %s', self.name)
+        return self.delete(*args, **kwargs)
+
     def due(self):
         return self.due_at or self.due_on
     due.admin_order_field = 'due_on'
 
     def refresh_from_asana(self):
+        """Updates this task from Asana."""
         client = client_connect()
         task_dict = client.tasks.find_by_id(self.remote_id)
         if task_dict['assignee']:
@@ -201,6 +211,7 @@ class Task(Hearted, BaseModel):
             self.tags.add(tag)
 
     def sync_to_asana(self, fields=None):
+        """Updates Asana to match values from this task."""
         fields = fields or ['completed']
         data = {}
         for field in fields:
@@ -210,8 +221,11 @@ class Task(Hearted, BaseModel):
         logger.debug('Updated asana for task %s', self.name)
 
     def add_comment(self, text):
+        """Adds a comment in Asana for this task."""
         client = client_connect()
-        return client.tasks.add_comment(self.remote_id, {'text': text})
+        response = client.tasks.add_comment(self.remote_id, {'text': text})
+        logger.debug('Added comment for task %s: %s', self.name, text)
+        return response
 
 
 class Team(BaseModel):
