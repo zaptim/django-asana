@@ -61,7 +61,7 @@ def sync_task(remote_id, task_dict, project, sync_tags=False):
         task_dict['assignee'] = user
     for key in (
             'hearts', 'liked', 'likes', 'num_likes',
-            'memberships', 'projects', 'workspace'):
+            'memberships', 'projects', 'workspace', 'custom_fields'):
         task_dict.pop(key, None)
     followers_dict = task_dict.pop('followers')
     tags_dict = task_dict.pop('tags')
