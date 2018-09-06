@@ -78,7 +78,7 @@ class Attachment(NamedModel):
         ('image', 'image'),
         ('other', 'other'),
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(null=True, blank=True)
     download_url = models.URLField(max_length=1024, null=True)
     host = models.CharField(choices=host_choices, max_length=24)
     parent = models.ForeignKey('Task', to_field='remote_id', on_delete=models.CASCADE)
@@ -130,7 +130,7 @@ class Project(NamedModel):
 
     archived = models.BooleanField(default=False)
     color = models.CharField(choices=color_choices, max_length=16, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(null=True, blank=True)
     current_status = models.CharField(choices=STATUS_CHOICES, max_length=16, null=True, blank=True)
     custom_field_settings = models.ManyToManyField(
         'CustomField', through='CustomFieldSettings', related_name='custom_field_settings')
@@ -160,7 +160,7 @@ class ProjectStatus(BaseModel):
     color_choices = ((choice, _(choice)) for choice in colors)
 
     color = models.CharField(choices=color_choices, max_length=16, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(null=True, blank=True)
     created_by = models.ForeignKey(
         'User', to_field='remote_id', null=True, on_delete=models.SET_NULL)
     html_text = models.TextField(null=True, blank=True)
@@ -182,7 +182,7 @@ class Story(Hearted, NamedModel):
         ('comment', _('comment')),
         ('system', _('system')),
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(null=True, blank=True)
     created_by = models.ForeignKey(
         'User', to_field='remote_id', null=True, on_delete=models.SET_NULL)
     html_text = models.CharField(max_length=1024, null=True, blank=True)
@@ -216,7 +216,7 @@ class Task(Hearted, NamedModel):
     completed = models.BooleanField(default=False)
     completed_at = models.DateTimeField(null=True, blank=True)
     custom_fields = models.TextField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(null=True, blank=True)
     due_at = models.DateTimeField(null=True, blank=True)
     due_on = models.DateField(null=True, blank=True)
     followers = models.ManyToManyField('User', related_name='tasks_following')

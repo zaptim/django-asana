@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('djasana', '0004_adds_attachment_type'),
+        ('djasana', '0017_attachment_type'),
     ]
 
     operations = [
