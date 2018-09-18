@@ -91,6 +91,7 @@ class Attachment(NamedModel):
         return self.permanent_url
 
 
+
 class CustomField(NamedModel):
     """Metadata for adding custom data to a task"""
     type_choices = (
@@ -99,8 +100,8 @@ class CustomField(NamedModel):
         ('text', 'text'),
     )
     precision_choices = [(num, num) for num in range(0, 6)]
-    description = models.CharField(max_length=1024, null=True, blank=True)
-    enum_options = models.CharField(max_length=1024, null=True, blank=True)
+    description = models.CharField(max_length=2048, null=True, blank=True)
+    enum_options = models.CharField(max_length=2048, null=True, blank=True)
     type = models.CharField(choices=type_choices, max_length=24)
     precision = models.SmallIntegerField(choices=precision_choices, null=True, blank=True)
 
@@ -189,7 +190,7 @@ class Story(Hearted, NamedModel):
     is_edited = models.BooleanField(default=False)
     is_pinned = models.BooleanField(default=False)
     source = models.CharField(choices=source_choices, max_length=16)
-    target = models.BigIntegerField(db_index=True)
+    target = models.BigIntegerField(db_index=True, null=True)
     text = models.CharField(max_length=1024, null=True, blank=True)
     type = models.CharField(choices=type_choices, max_length=16)
 
